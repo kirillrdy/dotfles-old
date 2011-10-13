@@ -24,3 +24,5 @@ endif
 set list
 
 " End /etc/vimrc
+" color
+colorscheme darkblue
