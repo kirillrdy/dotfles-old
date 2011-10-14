@@ -1,14 +1,21 @@
 " Begin /etc/vimrc
 " This vimrc was written by Kirill R
-
 set nocompatible
+
+" Two spaces for tab
 set backspace=2
+
+" Auto indentation
 set ai
 set ruler
+
+" Display line numbers
+set number
 
 " set shiftwidth=2 for a good reason
 set shiftwidth=2
 
+" Spaces for tabs and 2 spaces for tab
 set expandtab
 set tabstop=2
 
