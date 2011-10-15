@@ -30,6 +30,11 @@ endif
 
 set list
 
-" End /etc/vimrc
-" color
-colorscheme darkblue
+if has('gui_running')
+  " GUI colorsp
+  "highlight Normal     guifg=gray guibg=black
+  "highlight NORMAL  ctermbg=black ctermfg=white
+  colorscheme darkblue
+else
+  " Non-GUI (terminal) colors
+endif
