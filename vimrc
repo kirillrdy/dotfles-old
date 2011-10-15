@@ -35,6 +35,7 @@ if has('gui_running')
   "highlight Normal     guifg=gray guibg=black
   "highlight NORMAL  ctermbg=black ctermfg=white
   colorscheme darkblue
+  set guifont=Monospace\ 12
 else
   " Non-GUI (terminal) colors
 endif
