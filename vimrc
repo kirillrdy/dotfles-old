@@ -21,6 +21,8 @@ set tabstop=2
 
 set mousemodel=popup          " right mouse button pops up a menu in the GUI
 
+set noswapfile
+
 " we like colors
 syntax on
 
