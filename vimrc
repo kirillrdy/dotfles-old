@@ -21,14 +21,19 @@ set tabstop=2
 
 set mousemodel=popup          " right mouse button pops up a menu in the GUI
 
-
+" we like colors
 syntax on
+
+
 set hlsearch
 if (&term == "iterm") || (&term == "putty")
   set background=dark
 endif
 
+
+" Display non-visible chars
 set list
+
 
 if has('gui_running')
   " GUI colorsp
