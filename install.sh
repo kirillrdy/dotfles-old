@@ -1,4 +1,6 @@
 #!/usr/bin/env sh
 
 echo "Installing vimrc into ~/.vimrc"
-cp vimrc ~/.vimrc
+cp -v  vimrc ~/.vimrc
+mkdir -pv ~/.vim
+cp -rv vim/* ~/.vim/

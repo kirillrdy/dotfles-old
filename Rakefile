@@ -1,4 +1,3 @@
-
 task :install do
-  sh 'cp vimrc ~/.vimrc'
+  sh './install.sh'
 end
