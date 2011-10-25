@@ -1,5 +1,7 @@
 " Begin /etc/vimrc
 " This vimrc was written by Kirill R
+
+" vi was nice and all, but ....
 set nocompatible
 
 " Two spaces for tab
@@ -19,15 +21,20 @@ set shiftwidth=2
 set expandtab
 set tabstop=2
 
-set mousemodel=popup          " right mouse button pops up a menu in the GUI
+" right mouse button pops up a menu in the GUI
+set mousemodel=popup
 
+" Dont want .swp files 
 set noswapfile
 
 " we like colors
 syntax on
 
 
+" highlight search results
 set hlsearch
+
+" For white terminals set dark background
 if (&term == "iterm") || (&term == "putty")
   set background=dark
 endif
@@ -38,24 +45,13 @@ set list
 
 
 if has('gui_running')
-  " GUI colorsp
-  "highlight Normal     guifg=gray guibg=black
-  "highlight NORMAL  ctermbg=black ctermfg=white
   colorscheme darkblue
   set guifont=Monospace\ 12
 else
   " Non-GUI (terminal) colors
 endif
 
-
-"Use TAB to complete when typing words, else inserts TABs as usual.
-"Uses dictionary and source files to find matching words to complete.
-
-"See help completion for source,
-"Note: usual completion is on <C-n> but more trouble to press all the time.
-"Never type the same word twice and maybe learn a new spellings!
-"Use the Linux dictionary when spelling is in doubt.
-"Window users can copy the file to their machine.
+" Uncomment this function if you want to autocomplete using TAB
 "function! Tab_Or_Complete()
 "  if col('.')>1 && strpart( getline('.'), col('.')-2, 3 ) =~ '^\w'
 "    return "\<C-N>"
@@ -67,5 +63,8 @@ endif
 "
 "
 "
+" For Autocomplete plugin
+" Search in all buffers
 let g:acp_completeOption=".,w,b,u,t,i"
+" and DONT ignore case
 let g:acp_ignorecaseOption=0
