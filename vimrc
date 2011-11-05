@@ -21,6 +21,8 @@ set shiftwidth=2
 set expandtab
 set tabstop=2
 
+autocmd FileType c setlocal noexpandtab shiftwidth=4 tabstop=4
+
 " right mouse button pops up a menu in the GUI
 set mousemodel=popup
 
@@ -69,3 +71,7 @@ endif
 let g:acp_completeOption=".,w,b,u,t,i"
 " and DONT ignore case
 let g:acp_ignorecaseOption=0
+
+
+
+
