@@ -49,7 +49,7 @@ set list
 if has('gui_running')
   "colorscheme darkblue
   colorscheme koehler
-  set guifont=Monospace\ 11
+  set guifont=Monospace\ 12
 else
   " Non-GUI (terminal) colors
 endif
