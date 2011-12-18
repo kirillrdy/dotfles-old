@@ -39,7 +39,8 @@ xterm*faceName:           Monospace:bold:pixelsize=15
 xterm*dynamicColors:      true
 xterm*utf8:               2
 xterm*eightBitInput:      true
-xterm*saveLines:          512
+xterm*saveLines:          32000
+!xterm*saveLines:          512
 xterm*scrollTtyKeypress:  true
 xterm*scrollTtyOutput:    false
 xterm*scrollBar:          true
