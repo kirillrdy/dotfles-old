@@ -71,7 +71,3 @@ endif
 let g:acp_completeOption=".,w,b,u,t,i"
 " and DONT ignore case
 let g:acp_ignorecaseOption=0
-
-
-
-
