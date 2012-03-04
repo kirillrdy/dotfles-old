@@ -4,7 +4,7 @@
 " vi was nice and all, but ....
 set nocompatible
 
-" Two spaces for tab
+" Make backspace work like you'd expect
 set backspace=2
 
 " Auto indentation
