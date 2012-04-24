@@ -33,7 +33,7 @@
 ! xterm ----------------------------------------------------------------------
 
 xterm*geometry:           80x25
-xterm*faceName:           Monospace:bold:pixelsize=15
+xterm*faceName:           Monospace:pixelsize=15
 !xterm*faceName:           terminus:bold:pixelsize=15
 !xterm*font:              -*-dina-medium-r-*-*-16-*-*-*-*-*-*-*
 xterm*dynamicColors:      true
