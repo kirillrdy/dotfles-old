@@ -44,7 +44,7 @@ xterm*saveLines:          32000
 !xterm*saveLines:          512
 xterm*scrollTtyKeypress:  true
 xterm*scrollTtyOutput:    false
-xterm*scrollBar:          true
+xterm*scrollBar:          false
 xterm*rightScrollBar:     true
 xterm*jumpScroll:         true
 xterm*multiScroll:        true
