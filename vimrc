@@ -21,8 +21,8 @@ set shiftwidth=2
 set expandtab
 set tabstop=2
 
-autocmd FileType c setlocal noexpandtab shiftwidth=4 tabstop=4
-autocmd FileType go setlocal noexpandtab shiftwidth=4 tabstop=4
+autocmd FileType c setlocal noexpandtab shiftwidth=4 tabstop=4 nolist
+autocmd FileType go setlocal noexpandtab shiftwidth=4 tabstop=4 nolist
 
 " right mouse button pops up a menu in the GUI
 set mousemodel=popup
