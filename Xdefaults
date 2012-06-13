@@ -42,7 +42,7 @@ xterm*eightBitInput:      false
 xterm*saveLines:          2048
 xterm*scrollTtyKeypress:  true
 xterm*scrollTtyOutput:    false
-xterm*scrollBar:          true
+xterm*scrollBar:          false
 xterm*rightScrollBar:     true
 xterm*jumpScroll:         true
 xterm*multiScroll:        true
