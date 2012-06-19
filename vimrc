@@ -4,6 +4,14 @@
 " vi was nice and all, but ....
 set nocompatible
 
+
+" TODO move this in a better place as well as we dont need spelling in files other than 
+" commit messages
+set spell
+set foldmethod=syntax
+map <F4> :execute " grep -srnw --binary-files=without-match  . -e " . expand("<cword>") . " " <bar> cwindow<CR>
+
+
 " Make backspace work like you'd expect
 set backspace=2
 
