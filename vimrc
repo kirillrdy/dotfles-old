@@ -7,8 +7,8 @@ set nocompatible
 
 " TODO move this in a better place as well as we dont need spelling in files other than 
 " commit messages
-set spell
-set foldmethod=syntax
+"set spell
+"set foldmethod=syntax
 map <F4> :execute " grep -srnw --binary-files=without-match  . -e " . expand("<cword>") . " " <bar> cwindow<CR>
 
 
@@ -20,7 +20,7 @@ set ai
 set ruler
 
 " Display line numbers
-set number
+set relativenumber
 
 " set shiftwidth=2 for a good reason
 set shiftwidth=2
