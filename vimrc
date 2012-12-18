@@ -10,6 +10,7 @@ set nocompatible
 "set spell
 "set foldmethod=syntax
 map <F4> :execute " grep -srnw --binary-files=without-match  . -e " . expand("<cword>") . " " <bar> cwindow<CR>
+map <F12> :make <CR>
 
 
 " Make backspace work like you'd expect
