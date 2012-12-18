@@ -8,3 +8,4 @@ cp -rv vim/* ~/.vim/
 
 
 cp gitconfig ~/.gitconfig
+cp tigrc ~/.tigrc
