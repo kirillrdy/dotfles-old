@@ -1,4 +1,4 @@
-#!/usr/bin/env sh
+#!/bin/sh
 
 echo "Installing vimrc into ~/.vimrc"
 cp -v  dot.vimrc ~/.vimrc
