@@ -7,5 +7,5 @@ mkdir -pv ~/.vim
 cp -rv vim/* ~/.vim/
 
 
-cp -v gitconfig ~/.gitconfig
+cp -v dot.gitconfig ~/.gitconfig
 cp -v tigrc ~/.tigrc
