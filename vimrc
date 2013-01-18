@@ -1,11 +1,8 @@
 " Begin /etc/vimrc
 " This vimrc was written by Kirill R
 
-" vi was nice and all, but ....
-set nocompatible
 
-
-" TODO move this in a better place as well as we dont need spelling in files other than 
+" TODO move this in a better place as well as we dont need spelling in files other than
 " commit messages
 "set spell
 "set foldmethod=syntax
