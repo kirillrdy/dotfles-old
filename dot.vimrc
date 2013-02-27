@@ -1,8 +1,7 @@
-" Begin /etc/vimrc
-" This vimrc was written by Kirill R
-
-" we like colors
+execute pathogen#infect()
 syntax on
+filetype plugin indent on
+
 
 " Make backspace work like you'd expect
 set backspace=2
