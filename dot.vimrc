@@ -65,4 +65,6 @@ autocmd BufNewFile,BufRead COMMIT_EDITMSG set spell
 
 map <F4> :execute " grep -srnw --binary-files=without-match  . -e " . expand("<cword>") . " " <bar> cwindow<CR>
 map <F12> :make <CR>
-set runtimepath^=~/.vim/bundle/ctrlp.vim
+
+" YouCompleteMe
+let g:ycm_filetypes_to_completely_ignore = {}
