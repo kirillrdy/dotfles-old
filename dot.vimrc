@@ -41,8 +41,7 @@ set list
 
 
 if has('gui_running')
-  colorscheme darkblue
-  "colorscheme koehler
+  colorscheme made_of_code 
   set guifont=Monospace\ 11
   set go=aei
   "set go=aeirL
