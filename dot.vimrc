@@ -49,13 +49,6 @@ else
   " Non-GUI (terminal) colors
 endif
 
-"
-" For Autocomplete plugin
-" Search in all buffers
-let g:acp_completeOption=".,w,b,u,t,i"
-" and DONT ignore case
-let g:acp_ignorecaseOption=0
-
 set term=xterm
 set autoread
 
