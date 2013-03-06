@@ -32,8 +32,8 @@ do (cat $file | tar --unlink -xpJf - -C ${DESTDIR:-/}); done
 cp /var/tmp/zpool.cache /mnt/boot/zfs/zpool.cache
 
 echo 'zfs_enable="YES"' >> /mnt/etc/rc.conf
-echo 'zfs_load="YES"' &gt;&gt; /mnt/boot/loader.conf
-echo 'vfs.root.mountfrom="zfs:zroot"' &gt;&gt; /mnt/boot/loader.conf
+echo 'zfs_load="YES"' >> /mnt/boot/loader.conf
+echo 'vfs.root.mountfrom="zfs:zroot"' >> /mnt/boot/loader.conf
 touch /mnt/etc/fstab
 
 zfs umount -af
