@@ -60,3 +60,5 @@ map <F12> :make <CR>
 
 " YouCompleteMe
 let g:ycm_filetypes_to_completely_ignore = {}
+
+set completeopt=menuone
