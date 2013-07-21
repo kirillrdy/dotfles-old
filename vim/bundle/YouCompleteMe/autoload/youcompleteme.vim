@@ -40,16 +40,19 @@ function! youcompleteme#Enable()
   py import sys
   py import vim
   exe 'python sys.path.insert( 0, "' . s:script_folder_path . '/../python" )'
-  py import ycm
+  py from ycm import extra_conf_store
+  py extra_conf_store.CallExtraConfYcmCorePreloadIfExists()
+  py from ycm import base
 
-  if !pyeval( 'ycm.CompatibleWithYcmCore()')
+  if !pyeval( 'base.CompatibleWithYcmCore()')
     echohl WarningMsg |
       \ echomsg "YouCompleteMe unavailable: ycm_core too old, PLEASE RECOMPILE ycm_core" |
       \ echohl None
     return
   endif
 
-  py ycm_state = ycm.YouCompleteMe()
+  py from ycm.youcompleteme import YouCompleteMe
+  py ycm_state = YouCompleteMe()
 
   augroup youcompleteme
     autocmd!
@@ -61,14 +64,21 @@ function! youcompleteme#Enable()
     " that happens *after" BufRead/BufEnter has already triggered for the
     " initial file.
     autocmd BufRead,BufEnter * call s:OnBufferVisit()
+    autocmd BufUnload * call s:OnBufferUnload( expand( '<afile>:p' ) )
     autocmd CursorHold,CursorHoldI * call s:OnCursorHold()
     autocmd InsertLeave * call s:OnInsertLeave()
     autocmd InsertEnter * call s:OnInsertEnter()
+    autocmd VimLeave * call s:OnVimLeave()
   augroup END
 
+  call s:SetUpCpoptions()
   call s:SetUpCompleteopt()
   call s:SetUpKeyMappings()
-  call s:ForceSyntasticCFamilyChecker()
+  call s:SetUpBackwardsCompatibility()
+
+  if g:ycm_register_as_syntastic_checker
+    call s:ForceSyntasticCFamilyChecker()
+  endif
 
   if g:ycm_allow_changing_updatetime
     set ut=2000
@@ -113,15 +123,33 @@ function! s:SetUpKeyMappings()
           \ ' pumvisible() ? "\<C-p>" : "\' . key .'"'
   endfor
 
-  if strlen(g:ycm_key_invoke_completion)
+  if !empty( g:ycm_key_invoke_completion )
+    let invoke_key = g:ycm_key_invoke_completion
+
+    " Inside the console, <C-Space> is passed as <Nul> to Vim
+    if invoke_key ==# '<C-Space>' && !has('gui_running')
+      let invoke_key = '<Nul>'
+    endif
+
     " <c-x><c-o> trigger omni completion, <c-p> deselects the first completion
     " candidate that vim selects by default
-    exe 'inoremap <unique> ' . g:ycm_key_invoke_completion . ' <C-X><C-O><C-P>'
+    silent! exe 'inoremap <unique> ' . invoke_key .  ' <C-X><C-O><C-P>'
   endif
 
-  if strlen(g:ycm_key_detailed_diagnostics)
-    exe 'nnoremap <unique> ' . g:ycm_key_detailed_diagnostics .
+  if !empty( g:ycm_key_detailed_diagnostics )
+    silent! exe 'nnoremap <unique> ' . g:ycm_key_detailed_diagnostics .
           \ ' :YcmShowDetailedDiagnostic<cr>'
+  endif
+endfunction
+
+
+function! s:SetUpBackwardsCompatibility()
+  let complete_in_comments_and_strings =
+        \ get( g:, 'ycm_complete_in_comments_and_strings', 0 )
+
+  if complete_in_comments_and_strings
+    let g:ycm_complete_in_strings = 1
+    let g:ycm_complete_in_comments = 1
   endif
 endfunction
 
@@ -136,9 +164,22 @@ endfunction
 
 
 function! s:AllowedToCompleteInCurrentFile()
-  " If the user set the current filetype as a filetype that YCM should ignore,
-  " then we don't do anything
-  return !get( g:ycm_filetypes_to_completely_ignore, &filetype, 0 )
+  if empty( &filetype )
+    return 0
+  endif
+
+  let whitelist_allows = has_key( g:ycm_filetype_whitelist, '*' ) ||
+        \ has_key( g:ycm_filetype_whitelist, &filetype )
+  let blacklist_allows = !has_key( g:ycm_filetype_blacklist, &filetype )
+
+  return whitelist_allows && blacklist_allows
+endfunction
+
+
+function! s:SetUpCpoptions()
+  " Without this flag in cpoptions, critical YCM mappings do not work. There's
+  " no way to not have this and have YCM working, so force the flag.
+  set cpoptions+=B
 endfunction
 
 
@@ -165,6 +206,11 @@ function! s:SetUpCompleteopt()
   endif
 endfunction
 
+function! s:OnVimLeave()
+  py ycm_state.OnVimLeave()
+  py extra_conf_store.CallExtraConfVimCloseIfExists()
+endfunction
+
 
 function! s:OnBufferVisit()
   if !s:AllowedToCompleteInCurrentFile()
@@ -173,7 +219,17 @@ function! s:OnBufferVisit()
 
   call s:SetUpCompleteopt()
   call s:SetCompleteFunc()
+  py ycm_state.OnBufferVisit()
   call s:OnFileReadyToParse()
+endfunction
+
+
+function! s:OnBufferUnload( deleted_buffer_file )
+  if !s:AllowedToCompleteInCurrentFile() || empty( a:deleted_buffer_file )
+    return
+  endif
+
+  py ycm_state.OnBufferUnload( vim.eval( 'a:deleted_buffer_file' ) )
 endfunction
 
 
@@ -232,7 +288,9 @@ function! s:OnCursorMovedInsertMode()
   endif
 
   call s:IdentifierFinishedOperations()
-  call s:ClosePreviewWindowIfNeeded()
+  if g:ycm_autoclose_preview_window_after_completion
+    call s:ClosePreviewWindowIfNeeded()
+  endif
   call s:InvokeCompletion()
 endfunction
 
@@ -254,7 +312,10 @@ function! s:OnInsertLeave()
   let s:omnifunc_mode = 0
   call s:UpdateDiagnosticNotifications()
   py ycm_state.OnInsertLeave()
-  call s:ClosePreviewWindowIfNeeded()
+  if g:ycm_autoclose_preview_window_after_completion ||
+        \ g:ycm_autoclose_preview_window_after_insertion
+    call s:ClosePreviewWindowIfNeeded()
+  endif
 endfunction
 
 
@@ -300,7 +361,12 @@ endfunction
 
 
 function! s:ClosePreviewWindowIfNeeded()
-  if !g:ycm_autoclose_preview_window_after_completion
+  let current_buffer_name = bufname('')
+
+  " We don't want to try to close the preview window in special buffers like
+  " "[Command Line]"; if we do, Vim goes bonkers. Special buffers always start
+  " with '['.
+  if current_buffer_name[ 0 ] == '['
     return
   endif
 
@@ -315,14 +381,15 @@ endfunction
 function! s:UpdateDiagnosticNotifications()
   if get( g:, 'loaded_syntastic_plugin', 0 ) &&
         \ pyeval( 'ycm_state.NativeFiletypeCompletionUsable()' ) &&
-        \ pyeval( 'ycm_state.DiagnosticsForCurrentFileReady()' )
+        \ pyeval( 'ycm_state.DiagnosticsForCurrentFileReady()' ) &&
+        \ g:ycm_register_as_syntastic_checker
     SyntasticCheck
   endif
 endfunction
 
 
 function! s:IdentifierFinishedOperations()
-  if !pyeval( 'ycm.CurrentIdentifierFinished()' )
+  if !pyeval( 'base.CurrentIdentifierFinished()' )
     return
   endif
   py ycm_state.OnCurrentIdentifierFinished()
@@ -330,18 +397,35 @@ function! s:IdentifierFinishedOperations()
 endfunction
 
 
+" Returns 1 when inside comment and 2 when inside string
 function! s:InsideCommentOrString()
-  if g:ycm_complete_in_comments_and_strings
-    return 0
-  endif
-
   " Has to be col('.') -1 because col('.') doesn't exist at this point. We are
   " in insert mode when this func is called.
   let syntax_group = synIDattr( synIDtrans( synID( line( '.' ), col( '.' ) - 1, 1 ) ), 'name')
-  if stridx(syntax_group, 'Comment') > -1 || stridx(syntax_group, 'String') > -1
+
+  if stridx(syntax_group, 'Comment') > -1
     return 1
   endif
+
+  if stridx(syntax_group, 'String') > -1
+    return 2
+  endif
+
   return 0
+endfunction
+
+
+function! s:InsideCommentOrStringAndShouldStop()
+  let retval = s:InsideCommentOrString()
+  let inside_comment = retval == 1
+  let inside_string = retval == 2
+
+  if inside_comment && g:ycm_complete_in_comments ||
+        \ inside_string && g:ycm_complete_in_strings
+    return 0
+  endif
+
+  return retval
 endfunction
 
 
@@ -355,7 +439,7 @@ function! s:InvokeCompletion()
     return
   endif
 
-  if s:InsideCommentOrString() || s:OnBlankLine()
+  if s:InsideCommentOrStringAndShouldStop() || s:OnBlankLine()
     return
   endif
 
@@ -382,15 +466,16 @@ function! s:InvokeCompletion()
 endfunction
 
 
-function! s:CompletionsForQuery( query, use_filetype_completer )
+function! s:CompletionsForQuery( query, use_filetype_completer,
+      \ completion_start_column )
   if a:use_filetype_completer
     py completer = ycm_state.GetFiletypeCompleter()
   else
-    py completer = ycm_state.GetIdentifierCompleter()
+    py completer = ycm_state.GetGeneralCompleter()
   endif
 
-  " TODO: don't trigger on a dot inside a string constant
-  py completer.CandidatesForQueryAsync( vim.eval( 'a:query' ) )
+  py completer.CandidatesForQueryAsync( vim.eval( 'a:query' ),
+        \ int( vim.eval( 'a:completion_start_column' ) ) )
 
   let l:results_ready = 0
   while !l:results_ready
@@ -401,7 +486,7 @@ function! s:CompletionsForQuery( query, use_filetype_completer )
     endif
   endwhile
 
-  let l:results = pyeval( 'completer.CandidatesFromStoredRequest()' )
+  let l:results = pyeval( 'base.AdjustCandidateInsertionText( completer.CandidatesFromStoredRequest() )' )
   let s:searched_and_results_found = len( l:results ) != 0
   return { 'words' : l:results, 'refresh' : 'always' }
 endfunction
@@ -429,13 +514,13 @@ function! youcompleteme#Complete( findstart, base )
 
 
     " TODO: make this a function-local variable instead of a script-local one
-    let s:completion_start_column = pyeval( 'ycm.CompletionStartColumn()' )
+    let s:completion_start_column = pyeval( 'base.CompletionStartColumn()' )
     let s:should_use_filetype_completion =
           \ pyeval( 'ycm_state.ShouldUseFiletypeCompleter(' .
           \ s:completion_start_column . ')' )
 
     if !s:should_use_filetype_completion &&
-          \ !pyeval( 'ycm_state.ShouldUseIdentifierCompleter(' .
+          \ !pyeval( 'ycm_state.ShouldUseGeneralCompleter(' .
           \ s:completion_start_column . ')' )
       " for vim, -2 means not found but don't trigger an error message
       " see :h complete-functions
@@ -443,7 +528,8 @@ function! youcompleteme#Complete( findstart, base )
     endif
     return s:completion_start_column
   else
-    return s:CompletionsForQuery( a:base, s:should_use_filetype_completion )
+    return s:CompletionsForQuery( a:base, s:should_use_filetype_completion,
+          \ s:completion_start_column )
   endif
 endfunction
 
@@ -451,10 +537,10 @@ endfunction
 function! youcompleteme#OmniComplete( findstart, base )
   if a:findstart
     let s:omnifunc_mode = 1
-    let s:completion_start_column = pyeval( 'ycm.CompletionStartColumn()' )
+    let s:completion_start_column = pyeval( 'base.CompletionStartColumn()' )
     return s:completion_start_column
   else
-    return s:CompletionsForQuery( a:base, 1 )
+    return s:CompletionsForQuery( a:base, 1, s:completion_start_column )
   endif
 endfunction
 
@@ -498,7 +584,7 @@ function! s:CompleterCommand(...)
     if a:1 == 'ft=ycm:omni'
       py completer = ycm_state.GetOmniCompleter()
     elseif a:1 == 'ft=ycm:ident'
-      py completer = ycm_state.GetIdentifierCompleter()
+      py completer = ycm_state.GetGeneralCompleter()
     else
       py completer = ycm_state.GetFiletypeCompleterForFiletype(
                    \ vim.eval('a:1').lstrip('ft=') )
@@ -517,7 +603,26 @@ function! s:CompleterCommand(...)
   py completer.OnUserCommand( vim.eval( 'l:arguments' ) )
 endfunction
 
-command! -nargs=* YcmCompleter call s:CompleterCommand(<f-args>)
+
+function! youcompleteme#OpenGoToList()
+  set lazyredraw
+  cclose
+  execute 'belowright copen 3'
+  set nolazyredraw
+  au WinLeave <buffer> q  " automatically leave, if an option is chosen
+  redraw!
+endfunction
+
+
+command! -nargs=* -complete=custom,youcompleteme#SubCommandsComplete
+  \ YcmCompleter call s:CompleterCommand(<f-args>)
+
+
+function! youcompleteme#SubCommandsComplete( arglead, cmdline, cursorpos )
+  return join( pyeval( 'ycm_state.GetFiletypeCompleter().DefinedSubcommands()' ),
+    \ "\n")
+endfunction
+
 
 function! s:ForceCompile()
   if !pyeval( 'ycm_state.NativeFiletypeCompletionUsable()' )
@@ -539,7 +644,7 @@ function! s:ForceCompile()
           \ 'ycm_state.GettingCompletions()' )
 
     if !getting_completions
-      echom "Unable to retrieve diagnostics, see output of `:mes` for details."
+      echom "Unable to retrieve diagnostics, see output of `:mes` for possible details."
       return 0
     endif
 
@@ -563,7 +668,11 @@ command! YcmForceCompileAndDiagnostics call s:ForceCompileAndDiagnostics()
 
 
 function! s:ShowDiagnostics()
-  call s:ForceCompile()
+  let compilation_succeeded = s:ForceCompile()
+  if !compilation_succeeded
+    return
+  endif
+
   let diags = pyeval( 'ycm_state.GetDiagnosticsForCurrentFile()' )
   if !empty( diags )
     call setloclist( 0, diags )

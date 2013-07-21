@@ -24,6 +24,7 @@
 #  include "ClangUtils.h"
 #  include "CompletionData.h"
 #  include "Diagnostic.h"
+#  include "Location.h"
 #  include "UnsavedFile.h"
 #  include "CompilationDatabase.h"
 #endif // USE_CLANG_COMPLETER
@@ -45,7 +46,7 @@ int YcmCoreVersion()
 {
   // We increment this every time when we want to force users to recompile
   // ycm_core.
-  return 2;
+  return 4;
 }
 
 
@@ -60,10 +61,12 @@ BOOST_PYTHON_MODULE(ycm_core)
 
   class_< IdentifierCompleter, boost::noncopyable >( "IdentifierCompleter" )
     .def( "EnableThreading", &IdentifierCompleter::EnableThreading )
-    .def( "AddCandidatesToDatabase",
-          &IdentifierCompleter::AddCandidatesToDatabase )
-    .def( "AddCandidatesToDatabaseFromBufferAsync",
-          &IdentifierCompleter::AddCandidatesToDatabaseFromBufferAsync )
+    .def( "AddIdentifiersToDatabase",
+          &IdentifierCompleter::AddIdentifiersToDatabase )
+    .def( "AddIdentifiersToDatabaseFromTagFilesAsync",
+          &IdentifierCompleter::AddIdentifiersToDatabaseFromTagFilesAsync )
+    .def( "AddIdentifiersToDatabaseFromBufferAsync",
+          &IdentifierCompleter::AddIdentifiersToDatabaseFromBufferAsync )
     .def( "CandidatesForQueryAndTypeAsync",
           &IdentifierCompleter::CandidatesForQueryAndTypeAsync );
 
@@ -115,6 +118,10 @@ BOOST_PYTHON_MODULE(ycm_core)
   class_< ClangCompleter, boost::noncopyable >( "ClangCompleter" )
     .def( "EnableThreading", &ClangCompleter::EnableThreading )
     .def( "DiagnosticsForFile", &ClangCompleter::DiagnosticsForFile )
+    .def( "GetDeclarationLocation", &ClangCompleter::GetDeclarationLocation )
+    .def( "GetDefinitionLocation", &ClangCompleter::GetDefinitionLocation )
+    .def( "DeleteCachesForFileAsync",
+          &ClangCompleter::DeleteCachesForFileAsync )
     .def( "UpdatingTranslationUnit", &ClangCompleter::UpdatingTranslationUnit )
     .def( "UpdateTranslationUnitAsync",
           &ClangCompleter::UpdateTranslationUnitAsync )
@@ -141,6 +148,12 @@ BOOST_PYTHON_MODULE(ycm_core)
     .def_readonly( "filename_", &Diagnostic::filename_ )
     .def_readonly( "text_", &Diagnostic::text_ )
     .def_readonly( "long_formatted_text_", &Diagnostic::long_formatted_text_ );
+
+  class_< Location >( "Location" )
+    .def_readonly( "line_number_", &Location::line_number_ )
+    .def_readonly( "column_number_", &Location::column_number_ )
+    .def_readonly( "filename_", &Location::filename_ )
+    .def( "IsValid", &Location::IsValid );
 
   class_< std::vector< Diagnostic > >( "DiagnosticVec" )
     .def( vector_indexing_suite< std::vector< Diagnostic > >() );

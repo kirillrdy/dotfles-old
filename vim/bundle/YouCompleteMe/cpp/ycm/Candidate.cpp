@@ -28,24 +28,9 @@ namespace YouCompleteMe {
 
 namespace {
 
-std::string GetWordBoundaryChars( const std::string &text ) {
-  std::string result;
-
-  for ( uint i = 0; i < text.size(); ++i ) {
-    if ( i == 0 ||
-         IsUppercase( text[ i ] ) ||
-         ( i > 0 && text[ i - 1 ] == '_' && isalpha( text[ i ] ) )
-       ) {
-      result.push_back( tolower( text[ i ] ) );
-    }
-  }
-
-  return result;
-}
-
-LetterNode* FirstUppercaseNode( const std::list< LetterNode *> &list ) {
+LetterNode *FirstUppercaseNode( const std::list< LetterNode *> &list ) {
   LetterNode *node = NULL;
-  foreach( LetterNode *current_node, list ) {
+  foreach( LetterNode * current_node, list ) {
     if ( current_node->LetterIsUppercase() ) {
       node = current_node;
       break;
@@ -54,9 +39,9 @@ LetterNode* FirstUppercaseNode( const std::list< LetterNode *> &list ) {
   return node;
 }
 
-LetterNode* FirstLowercaseNode( const std::list< LetterNode *> &list ) {
+LetterNode *FirstLowercaseNode( const std::list< LetterNode *> &list ) {
   LetterNode *node = NULL;
-  foreach( LetterNode *current_node, list ) {
+  foreach( LetterNode * current_node, list ) {
     if ( !current_node->LetterIsUppercase() ) {
       node = current_node;
       break;
@@ -66,6 +51,28 @@ LetterNode* FirstLowercaseNode( const std::list< LetterNode *> &list ) {
 }
 
 } // unnamed namespace
+
+std::string GetWordBoundaryChars( const std::string &text ) {
+  std::string result;
+
+  for ( uint i = 0; i < text.size(); ++i ) {
+    bool is_first_char_but_not_underscore = i == 0 && text[ i ] != '_';
+    bool is_good_uppercase = i > 0 &&
+                             IsUppercase( text[ i ] ) &&
+                             !IsUppercase( text[ i - 1 ] );
+    bool is_alpha_after_underscore = i > 0 &&
+                                     text[ i - 1 ] == '_' &&
+                                     isalpha( text[ i ] );
+
+    if ( is_first_char_but_not_underscore ||
+         is_good_uppercase ||
+         is_alpha_after_underscore ) {
+      result.push_back( tolower( text[ i ] ) );
+    }
+  }
+
+  return result;
+}
 
 
 Bitset LetterBitsetFromString( const std::string &text ) {

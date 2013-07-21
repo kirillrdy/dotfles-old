@@ -2,6 +2,10 @@
 
 set -e
 
+function command_exists {
+  hash "$1" 2>/dev/null ;
+}
+
 function cmake_install {
   if [[ `uname -s` == "Darwin" ]]; then
     homebrew_cmake_install
@@ -11,7 +15,7 @@ function cmake_install {
 }
 
 function homebrew_cmake_install {
-  if [[ `which brew &> /dev/null` ]]; then
+  if command_exists brew; then
     brew install cmake
   else
     echo "Homebrew was not found installed in your system."
@@ -47,15 +51,20 @@ function python_finder {
 }
 
 function num_cores {
-  num_cpus=1
-  if [[ `uname -s` == "Linux" ]]; then
-    num_cpus=$(grep -c ^processor /proc/cpuinfo)
+  if command_exists nproc; then
+   num_cpus=$(nproc)
   else
-    # Works on Mac and FreeBSD
-    num_cpus=$(sysctl -n hw.ncpu)
+    num_cpus=1
+    if [[ `uname -s` == "Linux" ]]; then
+      num_cpus=$(grep -c ^processor /proc/cpuinfo)
+    else
+      # Works on Mac and FreeBSD
+      num_cpus=$(sysctl -n hw.ncpu)
+    fi
   fi
   echo $num_cpus
 }
+
 
 function install {
   ycm_dir=`pwd`
@@ -63,12 +72,26 @@ function install {
   pushd $build_dir
 
   if [[ `uname -s` == "Darwin" ]]; then
-    cmake -G "Unix Makefiles" $(python_finder) $1 . $ycm_dir/cpp
+    cmake -G "Unix Makefiles" $(python_finder) "$@" . $ycm_dir/cpp
   else
-    cmake -G "Unix Makefiles" $1 . $ycm_dir/cpp
+    cmake -G "Unix Makefiles" "$@" . $ycm_dir/cpp
   fi
 
   make -j $(num_cores) ycm_core
+  popd
+  rm -rf $build_dir
+}
+
+function testrun {
+  ycm_dir=`pwd`
+  build_dir=`mktemp -d -t ycm_build.XXXXXX`
+  pushd $build_dir
+
+  cmake -G "Unix Makefiles" "$@" . $ycm_dir/cpp
+  make -j $(num_cores) ycm_core_tests
+  cd ycm/tests
+  LD_LIBRARY_PATH=$ycm_dir/python ./ycm_core_tests
+
   popd
   rm -rf $build_dir
 }
@@ -79,28 +102,59 @@ function linux_cmake_install {
 }
 
 function usage {
-  echo "Usage: $0 [--clang-completer]"
+  echo "Usage: $0 [--clang-completer [--system-libclang]] [--omnisharp-completer]"
   exit 0
 }
 
-if [[ $# -gt 1 ]]; then
+cmake_args=""
+omnisharp_completer=false
+for flag in $@; do
+  case "$flag" in
+    --clang-completer)
+      cmake_args="-DUSE_CLANG_COMPLETER=ON"
+      ;;
+    --system-libclang)
+      cmake_args="$cmake_args -DUSE_SYSTEM_LIBCLANG=ON"
+      ;;
+    --omnisharp-completer)
+      omnisharp_completer=true
+      ;;
+    *)
+      usage
+      ;;
+  esac
+done
+
+if [[ $cmake_args == *-DUSE_SYSTEM_LIBCLANG=ON* ]] && \
+   [[ $cmake_args != *-DUSE_CLANG_COMPLETER=ON* ]]; then
   usage
 fi
 
-case "$1" in
-  --clang-completer)
-    cmake_args='-DUSE_CLANG_COMPLETER=ON'
-    ;;
-  '')
-    cmake_args=''
-    ;;
-  *)
-    usage
-    ;;
-esac
-
-if [[ ! -z `which cmake &> /dev/null` ]]; then
+if ! command_exists cmake; then
   echo "CMake is required to build YouCompleteMe."
   cmake_install
 fi
-install $cmake_args
+
+if [ -z "$YCM_TESTRUN" ]; then
+  install $cmake_args $EXTRA_CMAKE_ARGS
+else
+  testrun $cmake_args $EXTRA_CMAKE_ARGS
+fi
+
+if $omnisharp_completer; then
+  buildcommand="msbuild"
+  if ! command_exists msbuild; then
+    buildcommand="xbuild"
+    if ! command_exists xbuild; then
+      echo "msbuild or xbuild is required to build Omnisharp"
+      exit 1
+    fi
+  fi
+
+  ycm_dir=`pwd`
+  build_dir=$ycm_dir"/python/ycm/completers/cs/OmniSharpServer"
+  
+  cd $build_dir
+  $buildcommand
+  cd $ycm_dir
+fi

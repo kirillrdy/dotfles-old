@@ -19,6 +19,7 @@
 #define CLANGCOMPLETE_H_WLKDU0ZV
 
 #include "ConcurrentLatestValue.h"
+#include "ConcurrentStack.h"
 #include "Future.h"
 #include "UnsavedFile.h"
 #include "Diagnostic.h"
@@ -39,6 +40,7 @@ namespace YouCompleteMe {
 class CandidateRepository;
 class TranslationUnit;
 struct CompletionData;
+struct Location;
 
 typedef std::vector< CompletionData > CompletionDatas;
 
@@ -93,7 +95,25 @@ public:
     const std::vector< UnsavedFile > &unsaved_files,
     const std::vector< std::string > &flags );
 
+  Location GetDeclarationLocation(
+    const std::string &filename,
+    int line,
+    int column,
+    const std::vector< UnsavedFile > &unsaved_files,
+    const std::vector< std::string > &flags );
+
+  Location GetDefinitionLocation(
+    const std::string &filename,
+    int line,
+    int column,
+    const std::vector< UnsavedFile > &unsaved_files,
+    const std::vector< std::string > &flags );
+
+  void DeleteCachesForFileAsync( const std::string &filename );
+
 private:
+
+  void DeleteCaches();
 
   // This is basically a union. Only one of the two tasks is set to something
   // valid, the other task is invalid. Which one is valid depends on the caller.
@@ -108,6 +128,8 @@ private:
 
   typedef ConcurrentLatestValue <
   boost::shared_ptr< ClangPackagedTask > > LatestClangTask;
+
+  typedef ConcurrentStack< std::string > FileCacheDeleteStack;
 
   bool ShouldSkipClangResultCache( const std::string &query,
                                    int line,
@@ -170,6 +192,8 @@ private:
   boost::condition_variable clang_data_ready_condition_variable_;
 
   ClangResultsCache latest_clang_results_;
+
+  FileCacheDeleteStack file_cache_delete_stack_;
 
   // Unfortunately clang is not thread-safe so we need to be careful when we
   // access it. Only one thread at a time is allowed to access any single
