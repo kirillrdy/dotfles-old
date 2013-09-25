@@ -1,4 +1,4 @@
-gpart destroy -f ada0
+gpart destroy -F ada0
 gpart create -s gpt ada0
 gpart add -b 34 -s 94 -t freebsd-boot ada0
 gpart add -t freebsd-zfs -l disk0 ada0
