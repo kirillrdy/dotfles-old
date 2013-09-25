@@ -6,7 +6,6 @@ gpart bootcode -b /boot/pmbr -p /boot/gptzfsboot -i 1 ada0
 
 zpool create zroot /dev/gpt/disk0
 zpool set bootfs=zroot zroot
-zfs set checksum=fletcher4 zroot
 zfs set mountpoint=/mnt zroot
 
 zpool export zroot
