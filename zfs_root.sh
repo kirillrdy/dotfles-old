@@ -25,7 +25,7 @@ cd /mnt ; ln -s usr/home home
 
 cd /usr/freebsd-dist
 export DESTDIR=/mnt
-for file in base.txz lib32.txz kernel.txz doc.txz ports.txz src.txz;
+for file in base.txz lib32.txz kernel.txz src.txz;
 do (cat $file | tar --unlink -xpJf - -C ${DESTDIR:-/}); done
 
 cp /var/tmp/zpool.cache /mnt/boot/zfs/zpool.cache
