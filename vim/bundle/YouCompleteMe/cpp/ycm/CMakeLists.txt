@@ -28,6 +28,7 @@ if ( NOT PYTHONLIBS_VERSION_STRING VERSION_LESS "3.0.0" )
     "python2.\n" )
 endif()
 
+option( USE_DEV_FLAGS "Use compilation flags meant for YCM developers" OFF )
 option( USE_CLANG_COMPLETER "Use Clang semantic completer for C/C++/ObjC" OFF )
 option( USE_SYSTEM_LIBCLANG "Set to ON to use the system libclang library" OFF )
 set( PATH_TO_LLVM_ROOT "" CACHE PATH "Path to the root of a LLVM+Clang binary distribution" )
@@ -47,8 +48,8 @@ if ( USE_CLANG_COMPLETER AND NOT USE_SYSTEM_LIBCLANG AND NOT PATH_TO_LLVM_ROOT )
       set( CLANG_DIRNAME "clang+llvm-3.3-Ubuntu-13.04-x86_64-linux-gnu" )
       set( CLANG_MD5 "c0cbbe86c5836e03fe6eb96e95d059fa" )
     else()
-      set( CLANG_DIRNAME "clang+llvm-3.3-Ubuntu-13.04-x86-linux-gnu" )
-      set( CLANG_MD5 "1478157ffdf583461fe9c377398cccf3" )
+      set( CLANG_DIRNAME "clang+llvm-3.3-i386-debian6" )
+      set( CLANG_MD5 "415d033b60659433d4631df894673802" )
     endif()
     set( CLANG_FILENAME "${CLANG_DIRNAME}.tar.bz2" )
   endif()
@@ -107,16 +108,24 @@ if ( NOT IS_ABSOLUTE "${CLANG_INCLUDES_DIR}" )
 endif()
 
 if ( NOT EXTERNAL_LIBCLANG_PATH AND PATH_TO_LLVM_ROOT )
+  if ( MINGW )
+    set( LIBCLANG_SEARCH_PATH "${PATH_TO_LLVM_ROOT}/bin" )
+  else()
+    set( LIBCLANG_SEARCH_PATH "${PATH_TO_LLVM_ROOT}/lib" )
+  endif()
+
   # Need TEMP because find_library does not work with an option variable
   find_library( TEMP NAMES clang libclang
-                PATHS ${PATH_TO_LLVM_ROOT}/lib
+                PATHS ${LIBCLANG_SEARCH_PATH}
                 NO_DEFAULT_PATH )
   set( EXTERNAL_LIBCLANG_PATH ${TEMP} )
 endif()
 
 # This is a workaround for a CMake bug with include_directories(SYSTEM ...)
 # on Mac OS X. Bug report: http://public.kitware.com/Bug/view.php?id=10837
-set( CMAKE_INCLUDE_SYSTEM_FLAG_CXX "-isystem " )
+if ( APPLE )
+  set( CMAKE_INCLUDE_SYSTEM_FLAG_CXX "-isystem " )
+endif()
 
 # The SYSTEM flag makes sure that -isystem[header path] is passed to the
 # compiler instead of the standard -I[header path]. Headers included with
@@ -208,22 +217,6 @@ endif()
 
 #############################################################################
 
-# Due to a bug/misconfiguration/stupidity, boost 1.52 and libc++ don't like each
-# other much: a compilation error "Constexpr function never produces a constant
-# expression" pops up when trying to compile anything that uses
-# boost/chrono/duration.hpp (namely boost/thread for us). This is a workaround
-# that prevents this from happening. Also present in cpp/BoostParts/CMakeLists.txt.
-# See here for more details: https://svn.boost.org/trac/boost/ticket/7671
-# TODO: remove this when it's fixed upstream (probably boost 1.53).
-add_definitions( -DBOOST_THREAD_DONT_USE_CHRONO )
-
-if( MSVC OR CYGWIN )
-  # BOOST_PYTHON_SOURCE makes boost use the correct __declspec and
-  # BOOST_ALL_NO_LIB turns off MSVC library autolinking
-  add_definitions( -DBOOST_PYTHON_SOURCE -DBOOST_ALL_NO_LIB )
-endif()
-#############################################################################
-
 add_library( ${PROJECT_NAME} SHARED
              ${SOURCES}
            )
@@ -295,7 +288,7 @@ set_target_properties( ${PROJECT_NAME} PROPERTIES
 
 # For some reason, Xcode is too dumb to understand the -isystem flag and thus
 # borks on warnings in Boost.
-if ( ( CMAKE_COMPILER_IS_GNUCXX OR COMPILER_IS_CLANG ) AND
+if ( USE_DEV_FLAGS AND ( CMAKE_COMPILER_IS_GNUCXX OR COMPILER_IS_CLANG ) AND
      NOT CMAKE_GENERATOR_IS_XCODE )
   # We want all warnings, and warnings should be treated as errors
   set( CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra -Werror" )
@@ -306,8 +299,8 @@ endif()
 # We want warnings if we accidentally use C++11 features
 # We can't use this warning on FreeBSD because std headers on that OS are dumb.
 # See here: https://github.com/Valloric/YouCompleteMe/issues/260
-if ( COMPILER_IS_CLANG AND NOT CMAKE_GENERATOR_IS_XCODE AND NOT
-     SYSTEM_IS_FREEBSD )
+if ( USE_DEV_FLAGS AND COMPILER_IS_CLANG AND NOT CMAKE_GENERATOR_IS_XCODE AND
+     NOT SYSTEM_IS_FREEBSD )
   set( CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wc++98-compat" )
 endif()
 
