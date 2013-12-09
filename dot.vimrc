@@ -42,7 +42,8 @@ set list
 
 if has('gui_running')
   colorscheme made_of_code 
-  set guifont=Monospace\ 10
+  "set guifont=Menlo\ Regular:h14
+  set guifont=Monospace\ 12
   set go=aei
   "set go=aeirL
 else
