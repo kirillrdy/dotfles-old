@@ -63,3 +63,6 @@ map <F12> :make <CR>
 let g:ycm_filetypes_to_completely_ignore = {}
 
 set completeopt=menuone
+
+" For local replace
+nnoremap gr gd:%s/<C-R>///g<left><left>
