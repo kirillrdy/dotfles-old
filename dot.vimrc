@@ -63,6 +63,7 @@ map <F12> :make <CR>
 let g:ycm_filetypes_to_completely_ignore = {}
 
 set completeopt=menuone
+set wildignore+=*/tmp/*,*.so,*.swp,*.zip     " MacOSX/Linux
 
 " For local replace
 nnoremap gr gd:%s/<C-R>///g<left><left>
