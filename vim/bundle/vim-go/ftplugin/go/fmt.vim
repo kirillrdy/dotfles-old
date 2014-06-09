@@ -46,6 +46,10 @@ if !exists('g:go_fmt_fail_silently')
     let g:go_fmt_fail_silently = 0
 endif
 
+if !exists('g:go_fmt_options')
+    let g:go_fmt_options = ''
+endif
+
 if g:go_fmt_autosave
     autocmd BufWritePre <buffer> :GoFmt
 endif
@@ -64,6 +68,7 @@ function! s:GoEnableGoimports()
     let g:go_fmt_command = g:go_goimports_bin
 endfunction
 
+let s:got_fmt_error = 0
 
 "  modified and improved version, doesn't undo changes and break undo history
 "  - fatih 2014
@@ -71,13 +76,22 @@ function! s:GoFormat()
     let l:curw=winsaveview()
     let l:tmpname=tempname()
     call writefile(getline(1,'$'), l:tmpname)
-    let out = system(g:go_fmt_command . " " . l:tmpname)
+
+    let command = g:go_fmt_command . ' ' . g:go_fmt_options
+    let out = system(command . " " . l:tmpname)
 
     "if there is no error on the temp file, gofmt our original file
     if v:shell_error == 0
         try | silent undojoin | catch | endtry
-        silent execute "%!" . g:go_fmt_command
-        call setqflist([]) 
+        silent execute "%!" . command
+
+        " only clear quickfix if it was previously set, this prevents closing
+        " other quickfixs
+        if s:got_fmt_error 
+            let s:got_fmt_error = 0
+            call setqflist([])
+            cwindow
+        endif
     elseif g:go_fmt_fail_silently == 0 
         "otherwise get the errors and put them to quickfix window
         let errors = []
@@ -97,11 +111,12 @@ function! s:GoFormat()
             call setqflist(errors, 'r')
             echohl Error | echomsg "Gofmt returned error" | echohl None
         endif
+        let s:got_fmt_error = 1
+        cwindow
     endif
 
     call delete(l:tmpname)
     call winrestview(l:curw)
-    cwindow
 endfunction
 
 let b:did_ftplugin_go_fmt = 1

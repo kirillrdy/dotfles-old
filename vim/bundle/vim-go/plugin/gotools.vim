@@ -1,72 +1,56 @@
 if exists("g:go_loaded_gotools")
-  finish
+    finish
 endif
 let g:go_loaded_gotools = 1
 
-function! GoFiles()
- let out=system("go list -f $'{{range $f := .GoFiles}}{{$.Dir}}/{{$f}}\n{{end}}'")
- return out
-endfunction
 
-function! s:GoDeps()
- let out=system("go list -f $'{{range $f := .Deps}}{{$f}}\n{{end}}'")
- return out
-endfunction
+if !hasmapto('<Plug>(go-run)')
+    nnoremap <silent> <Plug>(go-run) :<C-u>call go#command#Run(expand('%'))<CR>
+endif
 
-function! g:GoCatchErrors(out, name)
-	let errors = []
-	for line in split(a:out, '\n')
-			let tokens = matchlist(line, '^\(.\{-}\):\(\d\+\):\s*\(.*\)')
-			if !empty(tokens)
-					call add(errors, {"filename": @%,
-													 \"lnum":     tokens[2],
-													 \"text":     tokens[3]})
-			endif
-	endfor
-	if empty(errors)
-			% | " Couldn't detect error format, output errors
-	endif
-	if !empty(errors)
-			call setqflist(errors, 'r')
-	endif
-	echohl Error | echomsg a:name . " returned error" | echohl None
-endfunction
+if !hasmapto('<Plug>(go-build)')
+    nnoremap <silent> <Plug>(go-build) :<C-u>call go#command#Build('')<CR>
+endif
 
-function! s:GoRun(...)
-  let default_makeprg = &makeprg
-  if !len(a:000)
-    let &makeprg = "go run " . join(split(GoFiles(), '\n'), ' ')
-  else
-    let &makeprg = "go run " . expand(a:1)
-  endif
-	make
-  let &makeprg = default_makeprg
-endfunction
+if !hasmapto('<Plug>(go-install)')
+    nnoremap <silent> <Plug>(go-install) :<C-u>call go#command#Install()<CR>
+endif
 
-function! s:GoBuild()
-  let default_makeprg = &makeprg
-	let gofiles = join(split(GoFiles(), '\n'), '\ ')
-  if v:shell_error
-    let &makeprg = "go build"
-  else
-    let &makeprg = "go build " . join(split(GoFiles(), '\n'), ' ')
-  endif
-	make
-  let &makeprg = default_makeprg
-endfunction
+if !hasmapto('<Plug>(go-test)')
+    nnoremap <silent> <Plug>(go-test) :<C-u>call go#command#Test()<CR>
+endif
 
-function! s:GoTest()
-  let out = system("go test .")
-  if v:shell_error
-		call g:GoCatchErrors(out, "Go test")
-  else
-    call setqflist([])
-  endif
-  cwindow
-endfunction
+if !hasmapto('<Plug>(go-vet)')
+    nnoremap <silent> <Plug>(go-vet) :<C-u>call go#command#Vet()<CR>
+endif
 
-command! GoFiles echo GoFiles()
-command! GoDeps echo s:GoDeps()
-command! GoTest call s:GoTest()
-command! -nargs=* -range GoRun call s:GoRun(<f-args>)
-command! -range GoBuild call s:GoBuild()
+if !hasmapto('<Plug>(go-files)')
+    nnoremap <silent> <Plug>(go-files) :<C-u>call go#tool#Files()<CR>
+endif
+
+if !hasmapto('<Plug>(go-deps)')
+    nnoremap <silent> <Plug>(go-deps) :<C-u>call go#tool#Deps()<CR>
+endif
+
+if !hasmapto('<Plug>(go-info)')
+    nnoremap <silent> <Plug>(go-info) :<C-u>call go#complete#Info()<CR>
+endif
+
+" This needs to be here, it doesn't get sourced when put into a file under ftplugin/go
+if !hasmapto('<Plug>(go-import)')
+    nnoremap <silent> <Plug>(go-import) :<C-u>call GoSwitchImport(1, '', expand('<cword>'))<CR>
+endif
+
+
+command! -nargs=0 GoFiles echo go#tool#Files()
+command! -nargs=0 GoDeps echo go#tool#Deps()
+command! -nargs=* GoInfo call go#complete#Info()
+
+command! -nargs=* -range -bang GoRun call go#command#Run(<bang>0,<f-args>)
+command! -nargs=? -range -bang GoBuild call go#command#Build(<bang>0)
+
+command! -nargs=* GoInstall call go#command#Install(<f-args>)
+command! -nargs=0 GoTest call go#command#Test()
+command! -nargs=0 GoVet call go#command#Vet()
+
+" vim:ts=4:sw=4:et
