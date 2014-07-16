@@ -56,7 +56,7 @@ set autoread
 " Set spelling on commit messages
 autocmd BufNewFile,BufRead COMMIT_EDITMSG set spell
 
-map <F4> :execute " grep -srnw --binary-files=without-match  . -e " . expand("<cword>") . " " <bar> cwindow<CR>
+map <F4> :execute " Ggrep " . expand("<cword>") . " " <bar> cwindow<CR>
 map <F12> :make <CR>
 
 " YouCompleteMe
