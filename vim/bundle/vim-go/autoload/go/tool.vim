@@ -35,6 +35,12 @@ function! go#tool#ShowErrors(out)
             call add(errors, {"filename" : expand("%:p:h:") . "/" . tokens[1],
                         \"lnum":     tokens[2],
                         \"text":     tokens[3]})
+        elseif !empty(errors)
+            " Preserve indented lines.
+            " This comes up especially with multi-line test output.
+            if match(line, '^\s') >= 0
+                call add(errors, {"text": line})
+            endif
         endif
     endfor
 
@@ -59,6 +65,19 @@ function! go#tool#ExecuteInDir(cmd) abort
         execute cd.'`=dir`'
     endtry
     return out
+endfunction
+
+" Exists checks whether the given importpath exists or not. It returns 0 if
+" the importpath exists under GOPATH.
+function! go#tool#Exists(importpath)
+    let command = "go list ". a:importpath
+    let out = go#tool#ExecuteInDir(command)
+
+    if v:shell_error
+        return -1
+    endif
+
+    return 0
 endfunction
 
 " vim:ts=4:sw=4:et
