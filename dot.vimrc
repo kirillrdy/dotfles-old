@@ -26,26 +26,19 @@ autocmd FileType go setlocal noexpandtab shiftwidth=4 tabstop=4 nolist
 " Dont want .swp files 
 set noswapfile
 
-
 " highlight search results
 set hlsearch
-
-" For white terminals set dark background
-if (&term == "iterm") || (&term == "putty")
-  set background=dark
-endif
-
 
 " Display non-visible chars
 set list
 
+set background=dark
+colorscheme solarized
 
 if has('gui_running')
-  colorscheme made_of_code 
   "set guifont=Menlo\ Regular:h14
-  set guifont=Monospace\ 12
+  set guifont=Monospace\ 11
   set go=aei
-  "set go=aeirL
 else
   " Non-GUI (terminal) colors
 endif
