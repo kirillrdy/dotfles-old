@@ -65,3 +65,5 @@ set wildignore+=*/tmp/*,*.so,*.swp,*.zip     " MacOSX/Linux
 
 " For local replace
 nnoremap gr gd:%s/<C-R>///g<left><left>
+
+let g:go_fmt_command = "goimports"
