@@ -36,8 +36,13 @@ set background=dark
 colorscheme solarized
 
 if has('gui_running')
-  "set guifont=Menlo\ Regular:h14
-  set guifont=Monospace\ 11
+  let os = substitute(system('uname'), "\n", "", "")
+  if os == "Darwin"
+    set guifont=Menlo\ Regular:h14
+  else
+    set guifont=Monospace\ 11
+  endif
+
   set go=aei
 else
   " Non-GUI (terminal) colors
