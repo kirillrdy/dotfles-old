@@ -30,7 +30,9 @@
      shell
      version-control
      go
+     clojure
      xkcd
+     dockerfile
      )
    ;; List of additional packages that will be installed without being
    ;; wrapped in a layer. If you need some configuration for these
@@ -39,6 +41,7 @@
    dotspacemacs-additional-packages '(
                                       slim-mode
                                       coffee-mode
+                                      yaml-mode
                                       )
    ;; A list of packages and/or extensions that will not be install and loaded.
    dotspacemacs-excluded-packages '()
@@ -162,7 +165,7 @@ before layers configuration."
 
 (defun dotspacemacs/config ()
   ;;(global-linum-mode)
-  (spacemacs/toggle-line-numbers)
+  (global-linum-mode)
   (linum-relative-toggle)
   (global-company-mode)
   (global-set-key (kbd "M-p") 'helm-projectile-find-file)
