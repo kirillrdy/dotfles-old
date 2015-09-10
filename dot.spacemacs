@@ -33,6 +33,8 @@
      clojure
      xkcd
      dockerfile
+     ruby
+     ;;java
      )
    ;; List of additional packages that will be installed without being
    ;; wrapped in a layer. If you need some configuration for these
@@ -168,7 +170,9 @@ before layers configuration."
   (global-linum-mode)
   (linum-relative-toggle)
   (global-company-mode)
+  (setq ruby-indent-level 2)
   (global-set-key (kbd "M-p") 'helm-projectile-find-file)
+
   "Configuration function.
  This function is called at the very end of Spacemacs initialization after
 layers configuration."
