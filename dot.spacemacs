@@ -58,6 +58,8 @@ before layers configuration."
   ;; This setq-default sexp is an exhaustive list of all the supported
   ;; spacemacs settings.
   (setq-default
+   ruby-indent-level 2
+   evil-shift-width 2
    ;; Either `vim' or `emacs'. Evil is always enabled but if the variable
    ;; is `emacs' then the `holy-mode' is enabled at startup.
    dotspacemacs-editing-style 'vim
@@ -169,7 +171,6 @@ before layers configuration."
   (global-linum-mode)
   (linum-relative-toggle)
   (global-company-mode)
-  (setq ruby-indent-level 2)
   (global-set-key (kbd "M-p") 'helm-projectile-find-file)
 
   "Configuration function.
