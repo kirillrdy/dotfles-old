@@ -34,6 +34,9 @@
      xkcd
      dockerfile
      ruby
+     ruby-on-rails
+     html
+     javascript
      )
    ;; List of additional packages that will be installed without being
    ;; wrapped in a layer. If you need some configuration for these
@@ -58,6 +61,9 @@ before layers configuration."
   ;; This setq-default sexp is an exhaustive list of all the supported
   ;; spacemacs settings.
   (setq-default
+   (setq web-mode-markup-indent-offset 2)
+   (setq web-mode-css-indent-offset 2)
+   (setq web-mode-code-indent-offset 2)
    ruby-indent-level 2
    evil-shift-width 2
    ;; Either `vim' or `emacs'. Evil is always enabled but if the variable
