@@ -63,11 +63,13 @@ before layers configuration."
   ;; This setq-default sexp is an exhaustive list of all the supported
   ;; spacemacs settings.
   (setq-default
-   (setq web-mode-markup-indent-offset 2)
-   (setq web-mode-css-indent-offset 2)
-   (setq web-mode-code-indent-offset 2)
+   web-mode-markup-indent-offset 2
+   web-mode-css-indent-offset 2
+   web-mode-code-indent-offset 2
    ruby-indent-level 2
    evil-shift-width 2
+   js2-basic-offset 2
+   js-indent-level 2
    ;; Either `vim' or `emacs'. Evil is always enabled but if the variable
    ;; is `emacs' then the `holy-mode' is enabled at startup.
    dotspacemacs-editing-style 'vim
