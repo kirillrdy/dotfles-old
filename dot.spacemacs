@@ -181,8 +181,6 @@ before layers configuration."
   (global-linum-mode)
   (linum-relative-toggle)
   (global-company-mode)
-  (global-set-key (kbd "M-p") 'helm-projectile-find-file)
-
   "Configuration function.
  This function is called at the very end of Spacemacs initialization after
 layers configuration."
