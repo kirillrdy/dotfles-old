@@ -1,0 +1,8 @@
+#+STARTUP: showall
+#+TITLE: Dotfiles
+
+* Current projects
+
+- Vidos
+- Nadeshiko
+- libkanji
