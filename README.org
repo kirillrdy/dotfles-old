@@ -3,6 +3,12 @@
 
 * Current projects
 
-- Vidos
+- [[~/src/github.com/kirillrdy/vidos/README.org][Vidos]]
 - Nadeshiko
 - libkanji
+
+| Name     | Language |
+|----------+----------|
+| Vidos    | Go       |
+| Libkanji |          |
+|          |          |
