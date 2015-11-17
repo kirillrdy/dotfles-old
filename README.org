@@ -10,5 +10,5 @@
 | Name     | Language |
 |----------+----------|
 | Vidos    | Go       |
-| Libkanji |          |
+| Libkanji | Go       |
 |          |          |
