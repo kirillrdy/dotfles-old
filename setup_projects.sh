@@ -2,6 +2,7 @@
 
 set -ex
 
+#TODO needs to be better, eg check if repos already exists or any unpushed uncommited changes
 root_dir=$HOME/src/github.com/kirillrdy
 mkdir -p $root_dir
 cd $root_dir
