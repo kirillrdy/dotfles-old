@@ -244,8 +244,6 @@ values."
 It is called immediately after `dotspacemacs/init'.  You are free to put almost
 any user code here.  The exception is org related code, which should be placed
 in `dotspacemacs/user-config'."
-  ;;(setq org-ditaa-jar-path "/usr/share/java/ditaa.jar")
-
   )
 
 (defun dotspacemacs/user-config ()
@@ -253,6 +251,7 @@ in `dotspacemacs/user-config'."
 This function is called at the very end of Spacemacs initialization after
 layers configuration. You are free to put any user code."
 
+  (setq org-ditaa-jar-path "/home/kirillvr/Downloads/ditaa0_9.jar")
   (setq org-plantuml-jar-path "/home/kirillvr/Downloads/plantuml.jar")
   (org-babel-do-load-languages
    'org-babel-load-languages
