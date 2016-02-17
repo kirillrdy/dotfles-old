@@ -10,7 +10,6 @@ cd $root_dir
 git clone git@github.com:kirillrdy/nadeshiko.git
 git clone git@github.com:kirillrdy/vidos.git
 git clone git@github.com:kirillrdy/libkanji.git
-git clone git@github.com:kirillrdy/silverkanji.git
 git clone git@github.com:kirillrdy/gopherjs.git
 git clone git@github.com:kirillrdy/pt.git
 git clone git@github.com:kirillrdy/train.git
