@@ -13,3 +13,5 @@ git clone git@github.com:kirillrdy/libkanji.git
 git clone git@github.com:kirillrdy/silverkanji.git
 git clone git@github.com:kirillrdy/gopherjs.git
 git clone git@github.com:kirillrdy/pt.git
+git clone git@github.com:kirillrdy/train.git
+git clone git@github.com:kirillrdy/osm.git
