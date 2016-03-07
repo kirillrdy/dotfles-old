@@ -36,10 +36,12 @@ values."
      syntax-checking
      go
      ruby
+     ruby-on-rails
      react
      dockerfile
      yaml
      xkcd
+     ;; themes-megapack
      ;; version-control
      )
    ;; List of additional packages that will be installed without being
