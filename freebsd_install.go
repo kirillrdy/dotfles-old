@@ -45,7 +45,7 @@ func main() {
 		"mercurial",
 		"firefox",
 		"chromium",
-		"gnome3",
+		"gnome3-lite",
 		"virtualbox-ose",
 	}
 
