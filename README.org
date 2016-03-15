@@ -17,3 +17,4 @@
 * Dragonflybsd setup
 ** need to restore my dwm setup
 Liberation Mono fonts
+* resurrect vim
