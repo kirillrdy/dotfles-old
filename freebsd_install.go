@@ -19,7 +19,7 @@ func execute(progname string, args ...string) {
 	}
 	err := command.Run()
 	if err != nil {
-		log.Panic(err)
+		log.Fatal(err)
 	}
 }
 
