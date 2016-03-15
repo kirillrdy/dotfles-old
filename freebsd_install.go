@@ -7,12 +7,16 @@ import (
 	"os/exec"
 )
 
+var verbose bool = false
+
 func execute(progname string, args ...string) {
 	log.Printf("Executing %v %v", progname, args)
 	command := exec.Command(progname, args...)
-	command.Stdout = os.Stdout
-	command.Stdin = os.Stdin
-	command.Stderr = os.Stderr
+	if verbose {
+		command.Stdout = os.Stdout
+		command.Stdin = os.Stdin
+		command.Stderr = os.Stderr
+	}
 	err := command.Run()
 	if err != nil {
 		log.Panic(err)
