@@ -8,6 +8,7 @@ import (
 )
 
 func execute(progname string, args ...string) {
+	log.Printf("Executing %v %v", progname, args)
 	command := exec.Command(progname, args...)
 	command.Stdout = os.Stdout
 	command.Stdin = os.Stdin
