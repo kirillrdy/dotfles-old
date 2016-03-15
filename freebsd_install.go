@@ -5,12 +5,13 @@ import (
 	"log"
 	"os"
 	"os/exec"
+	"strings"
 )
 
 var verbose bool = false
 
 func execute(progname string, args ...string) {
-	log.Printf("Executing %v %v", progname, args)
+	log.Printf("Executing \"%v %v\"\n", progname, strings.Join(args, " "))
 	command := exec.Command(progname, args...)
 	if verbose {
 		command.Stdout = os.Stdout
