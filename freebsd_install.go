@@ -8,7 +8,7 @@ import (
 	"strings"
 )
 
-var verbose bool = false
+var verbose = false
 
 func execute(progname string, args ...string) {
 	log.Printf("Executing \"%v %v\"\n", progname, strings.Join(args, " "))
@@ -28,7 +28,7 @@ func install(packageName string) {
 	execute("pkg", "install", "-y", packageName)
 }
 
-func enable_rc(rcVar string) {
+func enableRc(rcVar string) {
 	yes := fmt.Sprintf("%s=YES", rcVar)
 	execute("sysrc", yes)
 }
@@ -60,7 +60,7 @@ func main() {
 	}
 
 	for _, rcVar := range rcYesVars {
-		enable_rc(rcVar)
+		enableRc(rcVar)
 	}
 
 	for _, packageName := range packages {
