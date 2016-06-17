@@ -1,69 +1,32 @@
-execute pathogen#infect()
-syntax on
-filetype plugin indent on
+set nocompatible              " be iMproved, required
+filetype off                  " required
 
+" set the runtime path to include Vundle and initialize
+set rtp+=~/.vim/bundle/Vundle.vim
+call vundle#begin()
+" alternatively, pass a path where Vundle should install plugins
+"call vundle#begin('~/some/path/here')
 
-" Make backspace work like you'd expect
-set backspace=2
+" let Vundle manage Vundle, required
+Plugin 'VundleVim/Vundle.vim'
+Plugin 'Valloric/YouCompleteMe'
+Plugin 'scrooloose/syntastic'
+Plugin 'fatih/vim-go'
+Plugin 'phildawes/racer'
+Plugin 'wting/rust.vim'
+Plugin 'tpope/vim-fugitive'
 
-" Auto indentation
-set ai
-set ruler
-
-" Display line numbers
-set relativenumber
-
-" set shiftwidth=2 for a good reason
-set shiftwidth=2
-
-" Spaces for tabs and 2 spaces for tab
-set expandtab
-set tabstop=2
-
-autocmd FileType c setlocal noexpandtab shiftwidth=4 tabstop=4 nolist
-autocmd FileType go setlocal noexpandtab shiftwidth=4 tabstop=4 nolist
-
-" Dont want .swp files 
-set noswapfile
-
-" highlight search results
-set hlsearch
-
-" Display non-visible chars
-set list
-
-set background=dark
-colorscheme solarized
-
-if has('gui_running')
-  let os = substitute(system('uname'), "\n", "", "")
-  if os == "Darwin"
-    set guifont=Menlo\ Regular:h14
-  else
-    set guifont=Monospace\ 11
-  endif
-
-  set go=aei
-else
-  " Non-GUI (terminal) colors
-endif
-
-set term=xterm
-set autoread
-
-" Set spelling on commit messages
-autocmd BufNewFile,BufRead COMMIT_EDITMSG set spell
-
-map <F4> :execute " Ggrep " . expand("<cword>") . " " <bar> cwindow<CR>
-map <F12> :make <CR>
-
-" YouCompleteMe
-let g:ycm_filetypes_to_completely_ignore = {}
-
-set completeopt=menuone
-set wildignore+=*/tmp/*,*.so,*.swp,*.zip     " MacOSX/Linux
-
-" For local replace
-nnoremap gr gd:%s/<C-R>///g<left><left>
-
-let g:go_fmt_command = "goimports"
+" All of your Plugins must be added before the following line
+call vundle#end()            " required
+filetype plugin indent on    " required
+" To ignore plugin indent changes, instead use:
+"filetype plugin on
+"
+" Brief help
+" :PluginList       - lists configured plugins
+" :PluginInstall    - installs plugins; append `!` to update or just :PluginUpdate
+" :PluginSearch foo - searches for foo; append `!` to refresh local cache
+" :PluginClean      - confirms removal of unused plugins; append `!` to auto-approve removal
+"
+" see :h vundle for more details or wiki for FAQ
+" Put your non-Plugin stuff after this line
