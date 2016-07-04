@@ -19,6 +19,8 @@ Plugin 'wting/rust.vim'
 Plugin 'tpope/vim-fugitive'
 Plugin 'altercation/vim-colors-solarized'
 Plugin 'kchmck/vim-coffee-script'
+Plugin 'junegunn/fzf.vim'
+Plugin 'FelikZ/ctrlp-py-matcher'
 
 
 " All of your Plugins must be added before the following line
@@ -70,3 +72,6 @@ nnoremap K :grep! "\b<C-R><C-W>\b"<CR>:cw<CR>
 " bind \ (backward slash) to grep shortcut
 command -nargs=+ -complete=file -bar Ag silent! grep! <args>|cwindow|redraw!
 nnoremap \ :Ag<SPACE>
+set rtp+=~/.fzf
+
+let g:ctrlp_match_func = { 'match': 'pymatcher#PyMatch' }
