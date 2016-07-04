@@ -18,6 +18,8 @@ Plugin 'phildawes/racer'
 Plugin 'wting/rust.vim'
 Plugin 'tpope/vim-fugitive'
 Plugin 'altercation/vim-colors-solarized'
+Plugin 'kchmck/vim-coffee-script'
+
 
 " All of your Plugins must be added before the following line
 call vundle#end()            " required
@@ -34,8 +36,21 @@ filetype plugin indent on    " required
 " see :h vundle for more details or wiki for FAQ
 " Put your non-Plugin stuff after this line
 
-"set background=light
-"colorscheme solarized
+
+ syntax enable
+ filetype plugin indent on
+
+if has("gui_running")
+  set background=light
+  colorscheme solarized
+endif
+
+set tabstop=2
+set shiftwidth=2
+set expandtab
+set noswapfile
+set number
+set relativenumber
 
 " The Silver Searcher
 if executable('ag')
@@ -49,9 +64,9 @@ if executable('ag')
   let g:ctrlp_use_caching = 0
 endif
 
-set tabstop=2
-set shiftwidth=2
-set expandtab
-set noswapfile
-set number
-set relativenumber
+" bind K to grep word under cursor
+nnoremap K :grep! "\b<C-R><C-W>\b"<CR>:cw<CR>
+
+" bind \ (backward slash) to grep shortcut
+command -nargs=+ -complete=file -bar Ag silent! grep! <args>|cwindow|redraw!
+nnoremap \ :Ag<SPACE>
