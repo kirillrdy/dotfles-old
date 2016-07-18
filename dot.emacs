@@ -31,6 +31,7 @@
 (load-theme 'solarized-light t)
 (custom-set-variables '(coffee-tab-width 2))
 (setq-default indicate-empty-lines t)
+(setq make-backup-files nil)
 (global-evil-leader-mode)
 (evil-leader/set-leader "<SPC>")
 (evil-leader/set-key
