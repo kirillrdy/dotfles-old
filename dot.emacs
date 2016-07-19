@@ -15,6 +15,9 @@
     coffee-mode
     helm-ag
     solarized-theme
+    rust-mode
+    flycheck
+    flycheck-rust
     ))
 
 (dolist (p my-packages)
@@ -26,10 +29,16 @@
 (projectile-global-mode)
 (global-set-key (kbd "M-x") 'helm-M-x)
 
+(menu-bar-mode -1)
+(toggle-scroll-bar -1)
+(tool-bar-mode -1)
+
+
 (global-company-mode)
-(require 'whitespace) ; need to think about this
+(global-flycheck-mode)
 (linum-relative-global-mode)
 (load-theme 'solarized-light t)
+(add-hook 'flycheck-mode-hook #'flycheck-rust-setup)
 (custom-set-variables '(coffee-tab-width 2))
 (setq-default indicate-empty-lines t)
 (setq make-backup-files nil)
