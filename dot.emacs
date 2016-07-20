@@ -1,7 +1,11 @@
+;;; package -- Summary
+;;; Commentary:
 (require 'package)
+;;; Code:
 (add-to-list 'package-archives '("melpa" . "http://melpa.org/packages/"))
 (package-initialize)
-(package-refresh-contents)
+(if(not(package-installed-p 'evil))
+  (package-refresh-contents))
 
 (defvar my-packages
   '(evil
@@ -29,6 +33,7 @@
 (projectile-global-mode)
 (global-set-key (kbd "M-x") 'helm-M-x)
 
+;; gui bits
 (menu-bar-mode -1)
 (toggle-scroll-bar -1)
 (tool-bar-mode -1)
@@ -39,10 +44,14 @@
 (linum-relative-global-mode)
 (load-theme 'solarized-light t)
 (add-hook 'flycheck-mode-hook #'flycheck-rust-setup)
-(custom-set-variables '(coffee-tab-width 2))
+(setq company-minimum-prefix-length 2)
+(setq company-idle-delay 0)
+(setq coffee-tab-width 2)
 (setq-default indicate-empty-lines t)
 (setq make-backup-files nil)
 (global-evil-leader-mode)
+
+;; shortcuts
 (evil-leader/set-leader "<SPC>")
 (evil-leader/set-key
   "g s" 'magit-status
@@ -50,3 +59,5 @@
   "f" 'helm-projectile
   "b" 'helm-mini
   "a" 'helm-do-ag-project-root)
+(provide '.emacs)
+;;; .emacs ends here
