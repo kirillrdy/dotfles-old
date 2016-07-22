@@ -59,5 +59,6 @@
   "f" 'helm-projectile
   "b" 'helm-mini
   "a" 'helm-do-ag-project-root)
+(modify-syntax-entry ?_ "w" (standard-syntax-table))
 (provide '.emacs)
 ;;; .emacs ends here
