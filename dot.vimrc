@@ -15,12 +15,15 @@ Plugin 'kien/ctrlp.vim'
 Plugin 'scrooloose/syntastic'
 Plugin 'fatih/vim-go'
 Plugin 'phildawes/racer'
-Plugin 'wting/rust.vim'
 Plugin 'tpope/vim-fugitive'
+Plugin 'junegunn/gv.vim'
 Plugin 'altercation/vim-colors-solarized'
 Plugin 'kchmck/vim-coffee-script'
 Plugin 'junegunn/fzf.vim'
 Plugin 'FelikZ/ctrlp-py-matcher'
+Plugin 'scrooloose/nerdtree'
+Plugin 'jceb/vim-orgmode'
+Plugin 'rust-lang/rust.vim'
 
 
 " All of your Plugins must be added before the following line
